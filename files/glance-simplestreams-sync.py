@@ -252,9 +252,9 @@ def get_keystone_client(api_version):
 def set_openstack_env(id_conf, charm_conf):
     version = 'v3' if str(id_conf['api_version']).startswith('3') else 'v2.0'
     auth_url = ("{protocol}://{host}:{port}/{version}"
-                .format(protocol=id_conf['service_protocol'],
-                        host=id_conf['service_host'],
-                        port=id_conf['service_port'],
+                .format(protocol=id_conf['auth_protocol'],
+                        host=id_conf['auth_host'],
+                        port=id_conf['auth_port'],
                         version=version))
     os.environ['OS_AUTH_URL'] = auth_url
     os.environ['OS_USERNAME'] = id_conf['admin_user']
