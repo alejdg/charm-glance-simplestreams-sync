@@ -64,6 +64,9 @@ ID_CONF_FILE_NAME = os.path.join(CONF_FILE_DIR, 'identity.yaml')
 SYNC_SCRIPT_NAME = "glance-simplestreams-sync.py"
 SCRIPT_WRAPPER_NAME = "glance-simplestreams-sync.sh"
 
+SIMPLESTREAMS_FILE_NAME = "simplestreams.tar.gz"
+SIMPLESTREAMS_INSTALL_DIR = "/usr/lib/python2.7/dist-packages/simplestreams"
+
 CRON_D = '/etc/cron.d/'
 CRON_JOB_FILENAME = 'glance_simplestreams_sync'
 CRON_POLL_FILENAME = 'glance_simplestreams_sync_fastpoll'
@@ -218,6 +221,10 @@ def uninstall_cron_poll():
     if os.path.exists(CRON_POLL_FILEPATH):
         os.remove(CRON_POLL_FILEPATH)
 
+def patch_python_simplestreams():
+    "Patch python-simplestreams to handle internal endpoints"
+    shutil.rmtree(SIMPLESTREAMS_INSTALL_DIR)
+    shutil.unpack_archive(os.path.join("files", SIMPLESTREAMS_FILE_NAME), SIMPLESTREAMS_INSTALL_DIR, "gztar")
 
 @hooks.hook('identity-service-relation-joined')
 def identity_service_joined(relation_id=None):
@@ -268,6 +275,7 @@ def install():
     apt_update(fatal=True)
 
     apt_install(_packages)
+    patch_python_simplestreams()
 
     hookenv.log('end install hook.')
 
